@@ -20,11 +20,11 @@
     
     <access origin="*" />
     <platform name="android" />
-
+    <preference name="phonegap-version" value="cli-7.1.0" />
     <preference name="android-targetSdkVersion" value="26" />
 
 
-    
+
     <preference name="KeepRunning" value="true" />
     <preference name="InAppBrowserStorageEnabled" value="true" />
     <preference name="SuppressesIncrementalRendering" value="true" />
