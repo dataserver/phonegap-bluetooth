@@ -1,1 +1,1 @@
-# BluetoothLE Scanner
+# cordova-plugin-ble-central test
