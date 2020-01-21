@@ -5,11 +5,13 @@ var battery = {
 
 var app = {
     initialize: function() {
+        app.log("initialize... ");
         this.bindEvents();
         this.checkPermissions();
         detailPage.hidden = true;
     },
     bindEvents: function() {
+        app.log("bindEvents... ");
         document.addEventListener('deviceready', this.onDeviceReady, false);
         refreshButton.addEventListener('touchstart', this.refreshDeviceList, false);
         batteryStateButton.addEventListener('touchstart', this.readBatteryState, false);
@@ -17,6 +19,7 @@ var app = {
         deviceList.addEventListener('touchstart', this.connect, false); // assume not scrolling
     },
     checkPermissions: function() {
+        app.log("checkPermissions... ");
         var permissions = cordova.plugins.permissions;
         permissions.hasPermission(permissions.ACCESS_COARSE_LOCATION, function( status ){
             if ( status.hasPermission ) {
@@ -28,16 +31,19 @@ var app = {
         });
     },
     onDeviceReady: function() {
+        app.log("onDeviceReady... ");
         app.refreshDeviceList();
     },
     refreshDeviceList: function() {
-        deviceList.innerHTML = ''; // empties the list
+        app.log("refreshDeviceList... ");
+        $("#deviceList").html("empty");
         // scan for all devices
         ble.scan([], 15, app.onDiscoverDevice, app.onError);
     },
     onDiscoverDevice: function(device) {
-
-        this.log(JSON.stringify(device));
+        app.log("onDiscoverDevice... ");
+        app.log(JSON.stringify(device));
+        
         var listItem = document.createElement('li'),
             html = '<b>' + device.name + '</b><br/>' +
                 'RSSI: ' + device.rssi + '&nbsp;|&nbsp;' +
@@ -45,7 +51,7 @@ var app = {
 
         listItem.dataset.deviceId = device.id;  // TODO
         listItem.innerHTML = html;
-        deviceList.appendChild(listItem);
+        $("#deviceList").append(listItem);
 
     },
     connect: function(e) {
@@ -63,21 +69,22 @@ var app = {
         ble.connect(deviceId, onConnect, app.onError);
     },
     onBatteryLevelChange: function(data) {
-        this.log(data);
+        app.log(data);
         var message;
         var a = new Uint8Array(data);
-        batteryState.innerHTML = a[0];
+
+        $("#batteryState").html(a[0]);
     },
     readBatteryState: function(event) {
-        this.log("readBatteryState");
+        app.log("readBatteryState");
         var deviceId = event.target.dataset.deviceId;
         ble.read(deviceId, battery.service, battery.level, app.onReadBatteryLevel, app.onError);
     },
     onReadBatteryLevel: function(data) {
-        this.log(data);
+        app.log(data);
         var message;
         var a = new Uint8Array(data);
-        batteryState.innerHTML = a[0];
+        $("#batteryState").html(a[0]);
     },
     disconnect: function(event) {
         var deviceId = event.target.dataset.deviceId;
@@ -92,11 +99,9 @@ var app = {
         detailPage.hidden = false;
     },
     onError: function(reason) {
-        let elem = document.getElementById("log");
-        elem.innerHTML = elem.innerHTML +  "<p>"+ "ERROR: " + reason +"</p>";
+        $("#log").append("<p>"+ "ERROR: " + reason +"</p>");
     },
     log: function(text){
-        let elem = document.getElementById("log");
-        elem.innerHTML = elem.innerHTML +  "<p>"+ text +"</p>";
+        $("#log").append("<p>"+ text +"</p>");
     }
 };
