@@ -42,7 +42,10 @@ var app = {
     },
     onDiscoverDevice: function(device) {
         app.log("onDiscoverDevice... ");
+        var advertisingData = parseAdvertisingData(device.advertising);
+
         app.log(JSON.stringify(device));
+        app.log(JSON.stringify(advertisingData));
 
         var listItem = document.createElement('li'),
             html = '<b>' + device.name + '</b><br/>' +
@@ -105,3 +108,40 @@ var app = {
         $("#log").append("<p>"+ text +"</p>");
     }
 };
+
+
+function parseAdvertisingData(buffer) {
+    var length, type, data, i = 0, advertisementData = {};
+    var bytes = new Uint8Array(buffer);
+
+    while (length !== 0) {
+
+        length = bytes[i] & 0xFF;
+        i++;
+
+        // decode type constants from https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
+        type = bytes[i] & 0xFF;
+        i++;
+
+        data = bytes.slice(i, i + length - 1).buffer; // length includes type byte, but not length byte
+        i += length - 2;  // move to end of data
+        i++;
+
+        advertisementData[asHexString(type)] = data;
+    }
+
+    return advertisementData;
+}
+
+function asHexString(i) {
+    var hex;
+
+    hex = i.toString(16);
+
+    // zero padding
+    if (hex.length === 1) {
+        hex = "0" + hex;
+    }
+
+    return "0x" + hex;
+}
