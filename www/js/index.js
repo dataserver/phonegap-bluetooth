@@ -5,20 +5,9 @@ var battery = {
 
 var app = {
     initialize: function() {
-        this.checkPermissions();
         this.bindEvents();
+        this.checkPermissions();
         detailPage.hidden = true;
-    },
-    checkPermissions: function() {
-        var permissions = cordova.plugins.permissions;
-        permissions.hasPermission(permissions.ACCESS_COARSE_LOCATION, function( status ){
-            if ( status.hasPermission ) {
-                this.log("hasPermission Yes :D ");
-            } else {
-                this.log("hasPermission No :( ");
-                permissions.requestPermission(permissions.ACCESS_COARSE_LOCATION, requestPermissionSuccess, requestPermissionError);
-            }
-        });
     },
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
@@ -26,6 +15,17 @@ var app = {
         batteryStateButton.addEventListener('touchstart', this.readBatteryState, false);
         disconnectButton.addEventListener('touchstart', this.disconnect, false);
         deviceList.addEventListener('touchstart', this.connect, false); // assume not scrolling
+    },
+    checkPermissions: function() {
+        var permissions = cordova.plugins.permissions;
+        permissions.hasPermission(permissions.ACCESS_COARSE_LOCATION, function( status ){
+            if ( status.hasPermission ) {
+                app.log("hasPermission Yes :D ");
+            } else {
+                app.log("hasPermission No :( ");
+                permissions.requestPermission(permissions.ACCESS_COARSE_LOCATION, requestPermissionSuccess, requestPermissionError);
+            }
+        });
     },
     onDeviceReady: function() {
         app.refreshDeviceList();
@@ -92,9 +92,11 @@ var app = {
         detailPage.hidden = false;
     },
     onError: function(reason) {
-        this.log("ERROR: " + reason); // real apps should use notification.alert
+        let elem = document.getElementById("log");
+        elem.innerHTML = elem.innerHTML +  "<p>"+ "ERROR: " + reason +"</p>";
     },
     log: function(text){
-        $("#log").append("<p>"+ text +"</p>")
+        let elem = document.getElementById("log");
+        elem.innerHTML = elem.innerHTML +  "<p>"+ text +"</p>";
     }
 };
