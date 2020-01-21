@@ -7,7 +7,7 @@ var app = {
     initialize: function() {
         app.log("initialize... ");
         this.bindEvents();
-        this.checkPermissions();
+        // this.checkPermissions();
         detailPage.hidden = true;
     },
     bindEvents: function() {
@@ -43,7 +43,7 @@ var app = {
     onDiscoverDevice: function(device) {
         app.log("onDiscoverDevice... ");
         app.log(JSON.stringify(device));
-        
+
         var listItem = document.createElement('li'),
             html = '<b>' + device.name + '</b><br/>' +
                 'RSSI: ' + device.rssi + '&nbsp;|&nbsp;' +
