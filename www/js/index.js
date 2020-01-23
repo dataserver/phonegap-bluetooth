@@ -21,12 +21,17 @@ var app = {
     checkPermissions: function() {
         app.log("checkPermissions... ");
         var permissions = cordova.plugins.permissions;
-        permissions.hasPermission(permissions.ACCESS_COARSE_LOCATION, function( status ){
+        var list = [
+            permissions.BLUETOOTH,
+            permissions.BLUETOOTH_ADMIN,
+            permissions.ACCESS_COARSE_LOCATION
+        ];
+        permissions.checkPermission(list, function( status ){
             if ( status.hasPermission ) {
-                app.log("hasPermission Yes :D ");
+                app.log("has Permission Yes :D ");
             } else {
-                app.log("hasPermission No :( ");
-                permissions.requestPermission(permissions.ACCESS_COARSE_LOCATION, requestPermissionSuccess, requestPermissionError);
+                app.log("has Permission No :( ");
+                permissions.requestPermissions(list, requestPermissionSuccess, requestPermissionError);
             }
         });
     },
